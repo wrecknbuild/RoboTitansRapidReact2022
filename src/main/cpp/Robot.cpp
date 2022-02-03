@@ -14,7 +14,8 @@
 
 
   //Put pin numbers as variables here.
-  unsigned const short leftStickID = 0;
+  unsigned const short driveStickID = 0;
+  unsigned const short controlStickID = 1;
 
   //The Lead motor is the one in front of the lagging motor.
   static unsigned const short leadRightSparkID = 1;
@@ -29,8 +30,12 @@
   //Only need to pass the leading motors to differential drive because the lagging motors
   //will follow the leading motors.
   frc::DifferentialDrive m_robotDrive{m_leftLeadingMotor, m_rightLeadingMotor};
+  //Fine control differential drive object is needed for other joystick
+  frc::DifferentialDrive m_robotControl{m_leftLeadingMotor, m_rightLeadingMotor};
   //Instantiate the left joystick
-  frc::Joystick m_leftStick{leftStickID};
+  frc::Joystick m_driveStick{driveStickID};
+  //Instantiate the control joystick
+  frc::Joystick m_controlStick{controlStickID};
 
 void Robot::RobotInit() {
   m_chooser.SetDefaultOption(kAutoNameDefault, kAutoNameDefault);
@@ -96,12 +101,19 @@ void Robot::TeleopInit() {
 }
 
 void Robot::TeleopPeriodic() {
-  m_robotDrive.ArcadeDrive(m_leftStick.GetY(), m_leftStick.GetX());
+  m_robotDrive.ArcadeDrive(m_driveStick.GetY(), m_driveStick.GetX());
+
 }
 
 void Robot::TestPeriodic() {
-  std::cout << m_leftStick.GetY();
-  std::cout << m_leftStick.GetX();
+  std::cout << m_driveStick.GetY();
+  std::cout << m_driveStick.GetX();
+  m_leftLeadingMotor.RestoreFactoryDefaults();
+  m_leftLaggingMotor.RestoreFactoryDefaults();
+  m_rightLeadingMotor.RestoreFactoryDefaults();
+  m_rightLaggingMotor.RestoreFactoryDefaults();
+  m_robotDrive.ArcadeDrive(m_driveStick.GetY(), m_driveStick.GetX());
+
 }
 
 #ifndef RUNNING_FRC_TESTS
